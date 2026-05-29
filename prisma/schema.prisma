@@ -1,0 +1,287 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User & Authentication Models
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?   // For credentials login
+  image         String?
+  role          UserRole  @default(USER)
+  
+  accounts      Account[]
+  sessions      Session[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  
+  @@unique([identifier, token])
+}
+
+// ============================================
+// Portfolio Models
+// ============================================
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  category    String
+  tech        String[]
+  
+  // Detailed content
+  challenge   String?  @db.Text
+  solution    String?  @db.Text
+  results     String?  @db.Text
+  
+  // Media
+  thumbnail   String?
+  images      String[]
+  videoUrl    String?
+  
+  // Links
+  demoUrl     String?
+  githubUrl   String?
+  
+  // Styling
+  gradient    String?
+  accentColor String?
+  
+  // Metrics (JSON)
+  metrics     Json?
+  
+  // Settings
+  featured    Boolean  @default(false)
+  published   Boolean  @default(false)
+  order       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([published, featured])
+  @@index([category])
+  @@index([slug])
+}
+
+// ============================================
+// Services Models
+// ============================================
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  iconName    String   // Lucide icon name
+  variant     String   // For styling variants
+  features    String[]
+  
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([published])
+}
+
+// ============================================
+// Pricing Models
+// ============================================
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  price       String   // e.g. "15,000" or "Custom"
+  period      String   @default("project") // "project", "month", "year"
+  features    String[]
+  
+  recommended Boolean  @default(false)
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// Testimonials Models
+// ============================================
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  company     String
+  content     String   @db.Text
+  avatar      String?
+  rating      Int      @default(5)
+  
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// Blog Models
+// ============================================
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?  @db.Text
+  content     String   @db.Text // Markdown content
+  coverImage  String?
+  
+  category    String?
+  tags        String[]
+  
+  author      String   @default("Admin")
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  
+  // Analytics
+  views       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([published, publishedAt])
+  @@index([slug])
+  @@index([category])
+}
+
+// ============================================
+// Lead Generation Models
+// ============================================
+
+model Lead {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  message     String   @db.Text
+  
+  // Lead source tracking
+  source      String?  // "contact-form", "pricing-inquiry", etc.
+  
+  // Status
+  status      LeadStatus @default(NEW)
+  
+  // Admin notes
+  notes       String?  @db.Text
+  
+  // Telegram notification sent
+  notified    Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  WON
+  LOST
+}
+
+// ============================================
+// Site Settings
+// ============================================
+
+model SiteSettings {
+  id          String   @id @default("site-settings")
+  
+  // Contact Info
+  email       String
+  phone       String?
+  address     String?
+  
+  // Social Media
+  facebook    String?
+  twitter     String?
+  linkedin    String?
+  github      String?
+  instagram   String?
+  
+  // SEO
+  siteName        String
+  siteDescription String   @db.Text
+  siteUrl         String
+  ogImage         String?
+  
+  // Settings
+  maintenanceMode Boolean  @default(false)
+  
+  updatedAt   DateTime @updatedAt
+}

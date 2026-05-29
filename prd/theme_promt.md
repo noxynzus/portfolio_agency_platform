@@ -1,0 +1,1 @@
+Design a DeFi yield farming platform landing page with cyberpunk aesthetics, APY calculators, liquidity pools preview, tokenomics section, and wallet connect. Use neon on dark.

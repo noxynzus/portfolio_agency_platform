@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #050816;
+    color: #f8fafc;
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a1a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 245, 255, 0.2);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 245, 255, 0.4);
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(0, 245, 255, 0.2);
+    color: #00f5ff;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .glass-dark {
+    background: rgba(5, 8, 22, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .neon-text {
+    background: linear-gradient(90deg, #00f5ff 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .neon-text-cyan {
+    background: linear-gradient(90deg, #00f5ff 0%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-grid {
+    background-image: linear-gradient(
+        rgba(0, 245, 255, 0.025) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(0, 245, 255, 0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .bg-grid-sm {
+    background-image: linear-gradient(
+        rgba(0, 245, 255, 0.018) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(0, 245, 255, 0.018) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(0, 245, 255, 0.06);
+    border: 1px solid rgba(0, 245, 255, 0.15);
+    color: #00f5ff;
+  }
+
+  .card-glow {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease,
+      transform 0.3s ease;
+  }
+  .card-glow:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(0, 245, 255, 0.07);
+    border-color: rgba(0, 245, 255, 0.18);
+    transform: translateY(-4px);
+  }
+
+  .tech-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.375rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: rgba(0, 245, 255, 0.07);
+    border: 1px solid rgba(0, 245, 255, 0.12);
+    color: #22d3ee;
+  }
+
+  .btn-cyber {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    background: #00f5ff;
+    color: #050816;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-cyber:hover {
+    background: #22d3ee;
+    box-shadow: 0 0 35px rgba(0, 245, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-weight: 500;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+    text-decoration: none;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(0, 245, 255, 0.4);
+    background: rgba(0, 245, 255, 0.05);
+    color: #00f5ff;
+  }
+
+  /* Modal Animations */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 640px) {
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
