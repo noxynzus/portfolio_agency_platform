@@ -90,7 +90,7 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16 my-5">
         {/* Availability badge */}
         <motion.div
           variants={fadeUp}
@@ -198,8 +198,9 @@ export default function Hero() {
               <Icon className="w-4 h-4" />
             </a>
           ))}
-          <span className="text-gray-600 text-xs ml-2">Follow our journey</span>
+          
         </motion.div>
+        <span className="text-gray-600 text-xs ml-2 mt-5">Follow our journey</span>
       </div>
 
       {/* Scroll indicator */}
@@ -207,7 +208,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600 "
       >
         <span className="text-[0.65rem] tracking-[0.2em] uppercase">Scroll</span>
         <motion.div
