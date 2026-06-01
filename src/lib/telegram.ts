@@ -1,3 +1,4 @@
+'use server'
 import { z } from 'zod'
 
 /**
@@ -157,12 +158,11 @@ async function sendWithRetry(
     // Create abort controller for timeout
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_CONFIG.TIMEOUT_MS)
+    const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
 
     try {
       // Send to Telegram API with Next.js best practices
-      const response = await fetch(
-        `https://api.telegram.org/bot${botToken}/sendMessage`,
-        {
+      const response = await fetch(telegramApiUrl,{
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ async function sendWithRetry(
           body: JSON.stringify({
             chat_id: chatId,
             text: message,
-            // parse_mode: 'HTML',
+            parse_mode: 'HTML',
           }),
           signal: controller.signal,
           // Next.js best practice: notifications should never be cached
