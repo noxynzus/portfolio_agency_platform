@@ -3,7 +3,6 @@
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 import { leadSchema, leadUpdateSchema } from '@/lib/validations/lead'
-import { sendTelegramNotification } from '@/lib/telegram'
 import { checkRateLimit, getClientIP, RateLimitPresets } from '@/lib/rate-limit'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
@@ -46,26 +45,39 @@ export async function createLead(formData: FormData) {
       },
     })
 
-    // Send Telegram notification (non-blocking)
-    sendTelegramNotification({
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone || undefined,
-      company: lead.company || undefined,
-      message: lead.message,
-      source: lead.source || 'contact-form',
-      timestamp: lead.createdAt,
+    // Send Telegram notification via API route (non-blocking, fire-and-forget)
+    fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/telegram-bot`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone || undefined,
+        company: lead.company || undefined,
+        message: lead.message,
+        source: lead.source || 'contact-form',
+        timestamp: lead.createdAt.toISOString(),
+      }),
+      cache: 'no-store',
     })
+      .then((response) => response.json())
       .then((result) => {
         if (result.success) {
+          console.log('✅ Telegram notification sent successfully')
           // Mark as notified
           db.lead.update({
             where: { id: lead.id },
             data: { notified: true },
           }).catch(console.error)
+        } else {
+          console.warn('⚠️ Telegram notification failed:', result.error)
         }
       })
-      .catch(console.error)
+      .catch((error) => {
+        console.error('❌ Failed to send Telegram notification:', error)
+      })
 
     return { success: true, data: lead }
   } catch (error: any) {
