@@ -17,6 +17,7 @@ export async function createLead(formData: FormData) {
     const headersList = await headers()
     const clientIP = getClientIP(headersList)
     const rateLimit = checkRateLimit(`lead:${clientIP}`, RateLimitPresets.CONTACT_FORM)
+    const baseUrl = process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_APP_URL : 'http://localhost:3000'
 
     if (!rateLimit.allowed) {
       return {
@@ -46,7 +47,7 @@ export async function createLead(formData: FormData) {
     })
 
     // Send Telegram notification via API route (non-blocking, fire-and-forget)
-    fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/telegram-bot`, {
+    fetch(`${baseUrl}/api/telegram-bot`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
